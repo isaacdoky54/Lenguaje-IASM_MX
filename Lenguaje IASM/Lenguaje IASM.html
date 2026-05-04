@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>IASM</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f2027;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.app{
+    width:420px;
+    background:#1c1c1c;
+    padding:20px;
+    border-radius:15px;
+}
+
+textarea{
+    width:100%;
+    height:120px;
+    border-radius:10px;
+    padding:10px;
+    font-size:14px;
+}
+
+button{
+    margin-top:10px;
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#00c6ff;
+    color:white;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:10px;
+    background:#333;
+    padding:10px;
+    border-radius:10px;
+    max-height:200px;
+    overflow:auto;
+    white-space:pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+<h2>Traductor IASM</h2>
+
+<textarea id="input" placeholder="Escribe texto largo sin problema..."></textarea>
+<button onclick="traducir()">Traducir</button>
+
+<div id="resultado"></div>
+</div>
+
+<script>
+const dic = {
+'a':'dfv','b':'fg','c':'-bcv','d':'gsdf','e':'o56','f':'gfd.','g':'plf','h':'scvvs',
+'i':'cvbn','j':'ftujl','k':'dxfh','l':'lgg','m':'235ty','n':'dghh','ñ':'dgnsh',
+'o':'hfg','p':'vbb','q':'dfgngn','r':'dgegha','s':'dvwwr','t':'dgfhteer',
+'u':'dfghbdfg','v':'dfg','w':'zdfgv','x':'rgeerg','y':'awwe','z':'dfgbsdfv',
+' ':'/'
+};
+
+const inv = Object.fromEntries(Object.entries(dic).map(([k,v]) => [v,k]));
+
+
+function normalizar(texto){
+    return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"");
+}
+
+
+function esRaro(texto){
+    let palabras = texto.trim().split(/\s+/);
+    let validas = palabras.filter(p => inv[p]).length;
+    return validas > palabras.length * 0.4;
+}
+
+
+function aRaro(texto){
+    return texto.split("").map(l => dic[l] || l).join(" ");
+}
+
+
+function aEsp(texto){
+    return texto.split(/\s+/).map(p => {
+        if(p === "/") return " ";
+        return inv[p] || p;
+    }).join("");
+}
+
+function traducir(){
+    let raw = input.value;
+    let texto = normalizar(raw);
+
+    let resultado;
+
+    if(esRaro(texto)){
+        resultado = aEsp(texto);
+    } else {
+        resultado = aRaro(texto);
+    }
+
+    document.getElementById("resultado").innerText = resultado;
+}
+</script>
+
+</body>
+</html>
